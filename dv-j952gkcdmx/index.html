@@ -308,10 +308,20 @@
 /* ---- læseeksemplar: banner og kommentarer ---- */
 .lx-ban{position:sticky;top:0;z-index:60;background:#191A30;color:#fff;font-family:'Outfit',system-ui,sans-serif;font-size:14px;line-height:1.4;padding:10px 16px;text-align:center}
 .lx-b{color:#C0392B;font-weight:600}
-.lx-knap{position:fixed;right:16px;bottom:16px;z-index:70;min-height:48px;padding:0 20px;border:0;border-radius:24px;background:#C0392B;color:#fff;font:500 16px 'Outfit',system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer}
+.lx-knap{position:fixed;right:20px;bottom:20px;z-index:2147483000;min-height:56px;padding:0 26px;border:0;border-radius:28px;background:#C0392B;color:#fff;font:600 18px 'Outfit',system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer}
+.lx-knap:hover{background:#a93226}
+.lx-hj{position:fixed;inset:0;z-index:2147483600;background:rgba(17,17,30,.6);display:none;align-items:center;justify-content:center;padding:16px}
+.lx-hj.vis{display:flex;align-items:flex-start;overflow:auto}
+.lx-hj.vis .lx-hk{margin:auto;max-height:none}
+.lx-hk{background:#fafaf8;color:#1a1a1a;max-width:560px;width:100%;max-height:90vh;overflow:auto;border-top:5px solid #C0392B;padding:26px 24px 22px;font-family:'Outfit',system-ui,sans-serif;font-size:17px;line-height:1.55;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.lx-hk .k{font-weight:600;font-size:12px;letter-spacing:.22em;color:#C0392B;text-transform:uppercase}
+.lx-hk h2{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:26px;line-height:1.2;margin:6px 0 12px}
+.lx-hk p{margin:0 0 10px}.lx-hk ol{margin:0 0 12px 20px;padding:0}.lx-hk li{margin:0 0 4px}
+.lx-hk button{min-height:48px;padding:0 22px;border:0;border-radius:4px;background:#C0392B;color:#fff;font:600 17px 'Outfit',system-ui,sans-serif;cursor:pointer;margin-top:6px}
+.lx-hjk{display:inline-block;margin-left:10px;min-height:44px;padding:0 12px;border:1px solid #C0392B;border-radius:4px;background:#fff;color:#C0392B;font:500 14px 'Outfit',system-ui,sans-serif;cursor:pointer;vertical-align:middle}
 .lx-knap span{display:inline-block;min-width:22px;margin-left:8px;padding:1px 6px;border-radius:11px;background:#fff;color:#C0392B;font-size:13px}
-@media (max-width:640px){.lx-knap{bottom:72px;right:12px}}
-.lx-p{position:fixed;inset:auto 0 0 auto;z-index:80;width:min(440px,100vw);max-height:88vh;max-height:88svh;overflow:auto;background:#fafaf8;color:#1a1a1a;box-shadow:0 -6px 30px rgba(0,0,0,.3);
+@media (max-width:640px){.lx-knap{bottom:72px;right:12px;min-height:52px;padding:0 20px;font-size:17px}}
+.lx-p{position:fixed;right:0;bottom:0;z-index:80;width:min(440px,100vw);max-height:88vh;max-height:88svh;overflow:auto;background:#fafaf8;color:#1a1a1a;box-shadow:0 -6px 30px rgba(0,0,0,.3);
  font-family:'Outfit',system-ui,sans-serif;font-size:17px;line-height:1.5;padding:18px 18px 22px;border-top:4px solid #C0392B;display:none}
 .lx-p.vis{display:block}.lx-p h2{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:22px;margin:0 0 4px}.lx-p .lx-hvor{font-size:14px;color:#6b665d;margin:0 0 10px}
 .lx-p textarea{width:100%;min-height:110px;box-sizing:border-box;font:inherit;font-size:17px;padding:10px;border:1px solid #cfc6b6;border-radius:4px;background:#fff}
@@ -2506,12 +2516,26 @@
 </script>
 <script>
 (function(){
-  var MAIL="friisnaes@gmail.com", P=new URLSearchParams(location.search), navn=(P.get('til')||'').replace(/[^\p{L}\p{N} .'\-]/gu,'').slice(0,40);
+  var MAIL="friisnaes@gmail.com", P=new URLSearchParams(location.search), navn=(P.get('til')||'').replace(/[<>&"\/\\]/g,'').trim().slice(0,40);
   try{ if(navn) localStorage.setItem('lx-navn',navn); else navn=localStorage.getItem('lx-navn')||''; }catch(e){}
   var K='lx-kommentarer', liste=[]; try{ liste=JSON.parse(localStorage.getItem(K)||'[]')||[]; }catch(e){ liste=[]; }
   function gem(){ try{ localStorage.setItem(K, JSON.stringify(liste)); }catch(e){} }
   var ban=document.querySelector('.rd-title p');
   if(ban){ ban.innerHTML='<b class="lx-b">Læseeksemplar</b>'+(navn?' til '+navn.replace(/[<>&]/g,''):'')+' · personligt link, må ikke sendes videre'; }
+  var hj=document.createElement('div'); hj.className='lx-hj'; hj.setAttribute('role','dialog'); hj.setAttribute('aria-modal','true'); hj.setAttribute('aria-label','Velkommen');
+  hj.innerHTML='<div class="lx-hk"><div class="k">Læseeksemplar'+(navn?' til '+navn:'')+'</div><h2>Tak, fordi du vil læse med</h2>'
+   +'<p>Du kan bladre i hele bogen her – på computer, iPad og telefon.</p>'
+   +'<p><b>Sådan kommenterer du:</b> Tryk på den røde knap <b>»Skriv kommentar«</b> nederst til højre, når du er ved et sted, du vil sige noget om. Siden husker selv, hvor du var. Ros, tvivl, stavefejl, steder hvor du faldt af – alt er velkomment.</p>'
+   +'<p>Når du er færdig, trykker du <b>»Send til Thomas«</b>. Så åbner din mail med det hele skrevet ind. Indtil da bliver dine kommentarer kun her i din egen browser.</p>'
+   +'<p><b>Tre spørgsmål betyder mest for mig:</b></p><ol><li>Hvor blev du grebet – og hvor faldt du af?</li><li>Er der noget, der er uklart, forkert eller for meget?</li><li>Ville du give bogen til en, du holder af? Hvorfor, eller hvorfor ikke?</li></ol>'
+   +'<p>Linket er personligt, så send det ikke videre.</p><button type="button" id="lx-start">Begynd at læse</button></div>';
+  document.body.appendChild(hj);
+  function visHj(){ hj.classList.add('vis'); setTimeout(function(){ var b=document.getElementById('lx-start'); if(b) b.focus(); },50); }
+  function lukHj(){ hj.classList.remove('vis'); try{ localStorage.setItem('lx-set','1'); }catch(e){} }
+  document.getElementById('lx-start').onclick=lukHj; hj.addEventListener('click',function(e){ if(e.target===hj) lukHj(); });
+  var set=null; try{ set=localStorage.getItem('lx-set'); }catch(e){}
+  if(!set) visHj();
+  if(ban){ var hk=document.createElement('button'); hk.type='button'; hk.className='lx-hjk'; hk.textContent='Sådan kommenterer du'; hk.onclick=visHj; ban.appendChild(hk); }
   var knap=document.createElement('button'); knap.type='button'; knap.className='lx-knap'; knap.setAttribute('aria-controls','lx-p'); knap.setAttribute('aria-expanded','false');
   document.body.appendChild(knap);
   var p=document.createElement('section'); p.className='lx-p'; p.id='lx-p'; p.setAttribute('aria-label','Kommentarer');
@@ -2525,7 +2549,7 @@
   var mob=window.matchMedia('(max-width:640px)');
   function hvor(){ var e=document.getElementById(mob.matches?'mfLab':'rdLabel'); var s=e?e.textContent.trim():''; return /Klik på bogen/.test(s)?'Forsiden':s; }
   function tegn(){
-    knap.innerHTML='Kommentér'+(liste.length?'<span>'+liste.length+'</span>':'');
+    knap.innerHTML='✎ Skriv kommentar'+(liste.length?'<span>'+liste.length+'</span>':'');
     var ul=document.getElementById('lx-l'); ul.innerHTML='';
     liste.forEach(function(c,i){ var li=document.createElement('li'); var b=document.createElement('b'); b.textContent=c.hvor; var tx=document.createElement('div'); tx.textContent=c.t;
       var d=document.createElement('button'); d.type='button'; d.textContent='Slet'; d.onclick=function(){ liste.splice(i,1); gem(); tegn(); };
@@ -2544,7 +2568,7 @@
   };
   document.getElementById('lx-kop').onclick=function(){ var b=this, s=tekst(); function ok(){ b.textContent='Kopieret'; setTimeout(function(){b.textContent='Kopiér alle';},1600); }
     if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(s).then(ok,function(){}); } else { var a=document.createElement('textarea'); a.value=s; document.body.appendChild(a); a.select(); try{document.execCommand('copy'); ok();}catch(e){} document.body.removeChild(a); } };
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') luk(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ luk(); lukHj(); } });
   tegn();
 })();
 </script>
