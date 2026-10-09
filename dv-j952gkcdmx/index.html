@@ -330,6 +330,11 @@
 .lx-l{list-style:none;margin:12px 0 0;padding:0}.lx-l li{border-top:1px solid #e6e0d4;padding:10px 0;font-size:15px}.lx-l li b{display:block;font-size:13px;color:#C0392B;font-weight:600;letter-spacing:.04em}
 .lx-l li button{min-height:44px;border:0;background:none;color:#6b665d;text-decoration:underline;font:inherit;font-size:14px;cursor:pointer;padding:0}
 .lx-note{font-size:14px;color:#6b665d;margin:10px 0 0}
+.lx-gen{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;color:#333;cursor:pointer;margin:6px 0 0}.lx-gen input{width:22px;height:22px;accent-color:#C0392B;margin:0}
+.lx-hint{font-size:14px;color:#6b665d;margin:2px 0 0}
+.lx-a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;font:500 15px 'Outfit',system-ui,sans-serif;border-radius:4px;border:1px solid #191A30;background:#fff;color:#191A30;text-decoration:none}
+.lx-a.lx-prim{background:#C0392B;border-color:#C0392B;color:#fff}
+.lx-alt{display:none;background:#F4EDE2;border-left:3px solid #C0392B;padding:10px 12px;font-size:15px;margin:4px 0 0}.lx-alt.vis{display:block}
 </style>
 </head>
 <body data-pagefind-ignore="all" data-bog="dv-fuld">
@@ -2525,7 +2530,8 @@
   var hj=document.createElement('div'); hj.className='lx-hj'; hj.setAttribute('role','dialog'); hj.setAttribute('aria-modal','true'); hj.setAttribute('aria-label','Velkommen');
   hj.innerHTML='<div class="lx-hk"><div class="k">Læseeksemplar'+(navn?' til '+navn:'')+'</div><h2>Tak, fordi du vil læse med</h2>'
    +'<p>Du kan bladre i hele bogen her – på computer, iPad og telefon.</p>'
-   +'<p><b>Sådan kommenterer du:</b> Tryk på den røde knap <b>»Skriv kommentar«</b> nederst til højre, når du er ved et sted, du vil sige noget om. Siden husker selv, hvor du var. Ros, tvivl, stavefejl, steder hvor du faldt af – alt er velkomment.</p>'
+   +'<p><b>Sådan kommenterer du:</b> Har du noget til et bestemt sted, så tryk på den røde knap <b>»Skriv kommentar«</b> nederst til højre, mens du er på den side. Siden husker selv, hvor du var. Du kan skrive lige så mange kommentarer, du har lyst til – én for hvert sted.</p>'
+   +'<p>Har du mere generelle tanker om bogen, kan du skrive dem til sidst. Sæt bare flueben i <b>»Generel kommentar«</b>, så ved jeg, at den gælder hele bogen. Ros, tvivl, stavefejl, steder hvor du faldt af – alt er velkomment.</p>'
    +'<p>Når du er færdig, trykker du <b>»Send til Thomas«</b>. Så åbner din mail med det hele skrevet ind. Indtil da bliver dine kommentarer kun her i din egen browser.</p>'
    +'<p><b>Tre spørgsmål betyder mest for mig:</b></p><ol><li>Hvor blev du grebet – og hvor faldt du af?</li><li>Er der noget, der er uklart, forkert eller for meget?</li><li>Ville du give bogen til en, du holder af? Hvorfor, eller hvorfor ikke?</li></ol>'
    +'<p>Linket er personligt, så send det ikke videre.</p><button type="button" id="lx-start">Begynd at læse</button></div>';
@@ -2541,12 +2547,17 @@
   var p=document.createElement('section'); p.className='lx-p'; p.id='lx-p'; p.setAttribute('aria-label','Kommentarer');
   p.innerHTML='<button type="button" class="lx-luk" aria-label="Luk">×</button><h2>Din kommentar</h2><p class="lx-hvor" id="lx-hvor"></p>'
    +'<label for="lx-t" style="position:absolute;left:-9999px">Kommentar</label><textarea id="lx-t" placeholder="Hvad tænkte du her? Ros, tvivl, fejl – alt er velkomment."></textarea>'
+   +'<label class="lx-gen"><input type="checkbox" id="lx-genk"> Generel kommentar til hele bogen (ikke til denne side)</label>'
+   +'<p class="lx-hint">Skriv så mange kommentarer, du vil – én for hvert sted. Generelle tanker kan du skrive til sidst.</p>'
    +'<div class="lx-r"><button type="button" class="lx-prim" id="lx-gem">Gem kommentar</button></div>'
    +'<ul class="lx-l" id="lx-l"></ul>'
-   +'<div class="lx-r" id="lx-send-r"><button type="button" class="lx-prim" id="lx-send">Send til Thomas</button><button type="button" id="lx-kop">Kopiér alle</button></div>'
+   +'<div id="lx-send-r"><div class="lx-r"><a class="lx-prim lx-a" id="lx-send" href="#">Send til Thomas</a><button type="button" id="lx-kop">Kopiér alle</button></div>'
+   +'<div class="lx-alt" id="lx-alt"><b>Åbnede din mail ikke?</b> Så vælg én af disse:<div class="lx-r"><a class="lx-a" id="lx-gmail" href="#" target="_blank" rel="noopener">Send med Gmail</a><a class="lx-a" id="lx-outlook" href="#" target="_blank" rel="noopener">Send med Outlook</a></div>'
+   +'Eller tryk »Kopiér alle«, og sæt teksten ind i en almindelig mail til <b>'+MAIL+'</b>.</div></div>'
    +'<p class="lx-note">Dine kommentarer gemmes kun her i din egen browser – ikke på en server – indtil du selv sender dem. »Send til Thomas« åbner dit mailprogram med det hele skrevet ind.</p>';
   document.body.appendChild(p);
   var mob=window.matchMedia('(max-width:640px)');
+  function tekst(){ return liste.map(function(c){ return '• '+c.hvor+'\n'+c.t; }).join('\n\n'); }
   function hvor(){ var e=document.getElementById(mob.matches?'mfLab':'rdLabel'); var s=e?e.textContent.trim():''; return /Klik på bogen/.test(s)?'Forsiden':s; }
   function tegn(){
     knap.innerHTML='✎ Skriv kommentar'+(liste.length?'<span>'+liste.length+'</span>':'');
@@ -2554,18 +2565,18 @@
     liste.forEach(function(c,i){ var li=document.createElement('li'); var b=document.createElement('b'); b.textContent=c.hvor; var tx=document.createElement('div'); tx.textContent=c.t;
       var d=document.createElement('button'); d.type='button'; d.textContent='Slet'; d.onclick=function(){ liste.splice(i,1); gem(); tegn(); };
       li.appendChild(b); li.appendChild(tx); li.appendChild(d); ul.appendChild(li); });
-    document.getElementById('lx-send-r').style.display=liste.length?'flex':'none';
+    document.getElementById('lx-send-r').style.display=liste.length?'block':'none';
+    var emne='Kommentarer til »Det vigtigste, du ikke kan købe til dit barn«'+(navn?' fra '+navn:''), krop=(navn?'Fra '+navn+'\n\n':'')+tekst();
+    document.getElementById('lx-send').href='mailto:'+MAIL+'?subject='+encodeURIComponent(emne)+'&body='+encodeURIComponent(krop);
+    document.getElementById('lx-gmail').href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(MAIL)+'&su='+encodeURIComponent(emne)+'&body='+encodeURIComponent(krop);
+    document.getElementById('lx-outlook').href='https://outlook.live.com/mail/0/deeplink/compose?to='+encodeURIComponent(MAIL)+'&subject='+encodeURIComponent(emne)+'&body='+encodeURIComponent(krop);
   }
-  function aaben(){ document.getElementById('lx-hvor').textContent='Her: '+hvor(); p.classList.add('vis'); knap.setAttribute('aria-expanded','true'); setTimeout(function(){document.getElementById('lx-t').focus();},50); }
-  function luk(){ p.classList.remove('vis'); knap.setAttribute('aria-expanded','false'); }
+  function aaben(){ document.getElementById('lx-hvor').textContent='Her: '+hvor(); p.classList.add('vis'); knap.setAttribute('aria-expanded','true'); knap.style.display='none'; setTimeout(function(){document.getElementById('lx-t').focus();},50); }
+  function luk(){ p.classList.remove('vis'); knap.setAttribute('aria-expanded','false'); knap.style.display=''; }
   knap.onclick=function(){ p.classList.contains('vis')?luk():aaben(); };
   p.querySelector('.lx-luk').onclick=luk;
-  document.getElementById('lx-gem').onclick=function(){ var ta=document.getElementById('lx-t'), v=ta.value.trim(); if(!v) return; liste.push({hvor:hvor(),t:v}); gem(); ta.value=''; tegn(); };
-  function tekst(){ return liste.map(function(c){ return '• '+c.hvor+'\n'+c.t; }).join('\n\n'); }
-  document.getElementById('lx-send').onclick=function(){
-    var emne='Kommentarer til »Det vigtigste, du ikke kan købe til dit barn«'+(navn?' fra '+navn:'');
-    location.href='mailto:'+MAIL+'?subject='+encodeURIComponent(emne)+'&body='+encodeURIComponent((navn?'Fra '+navn+'\n\n':'')+tekst());
-  };
+  document.getElementById('lx-gem').onclick=function(){ var ta=document.getElementById('lx-t'), v=ta.value.trim(); if(!v) return; var g=document.getElementById('lx-genk'); liste.push({hvor:(g&&g.checked)?'Generelt om bogen':hvor(),t:v}); if(g) g.checked=false; gem(); ta.value=''; tegn(); };
+  document.getElementById('lx-send').addEventListener('click',function(){ setTimeout(function(){ document.getElementById('lx-alt').classList.add('vis'); },700); });
   document.getElementById('lx-kop').onclick=function(){ var b=this, s=tekst(); function ok(){ b.textContent='Kopieret'; setTimeout(function(){b.textContent='Kopiér alle';},1600); }
     if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(s).then(ok,function(){}); } else { var a=document.createElement('textarea'); a.value=s; document.body.appendChild(a); a.select(); try{document.execCommand('copy'); ok();}catch(e){} document.body.removeChild(a); } };
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ luk(); lukHj(); } });
