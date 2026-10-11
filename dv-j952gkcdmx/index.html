@@ -306,10 +306,10 @@
 @media (max-width:640px){.sample button{min-height:44px;padding:0 10px}.read-also a,.footer-links a,.also{display:inline-flex;align-items:center;min-height:44px}
 .nav-toggle{min-width:44px;min-height:44px}.nav-brand{display:inline-flex;align-items:center;min-height:44px}}
 .cta-again{min-height:44px}</style>
-<!-- kompakt-landskab v1 -->
+<!-- kompakt-landskab v3 -->
 <style id="kompakt-landskab">
 .rd-kmenu{display:none}
-@media (orientation: landscape) and (pointer: coarse) and (min-width: 900px) {
+@media (pointer: coarse) and (min-width: 700px) {
   html.rd-kompakt .site-nav,html.rd-kompakt .rd-head{display:none!important}
   html.rd-kompakt .reader{height:100vh!important;height:100svh!important}
   html.rd-kompakt .rd-kmenu{display:inline-flex;position:fixed;top:10px;left:10px;z-index:60;align-items:center;gap:8px;min-height:44px;padding:0 16px;
@@ -2534,7 +2534,7 @@
 </script>
 <script>/* kompakt-landskab: mere plads til opslaget på iPad i landskab */
 (function(){
-  var mq=window.matchMedia&&window.matchMedia('(orientation: landscape) and (pointer: coarse) and (min-width: 900px)');if(!mq)return;
+  var mq=window.matchMedia&&window.matchMedia('(pointer: coarse) and (min-width: 700px)');if(!mq)return;
   var root=document.documentElement,stage=document.getElementById('stage'),btn=document.getElementById('rdKmenu'),fra=false;
   if(!stage||!btn)return;
   function til(){if(fra||!mq.matches||root.classList.contains('rd-kompakt'))return;root.classList.add('rd-kompakt');window.scrollTo(0,0);}
@@ -2545,6 +2545,8 @@
   btn.addEventListener('click',af);
   var skift=function(){fra=false;if(!mq.matches)root.classList.remove('rd-kompakt');};
   if(mq.addEventListener)mq.addEventListener('change',skift);else if(mq.addListener)mq.addListener(skift);
+  var ori=window.matchMedia('(orientation: landscape)');var drej=function(){fra=false;};   /* når iPad'en drejes, må den gerne folde sammen igen */
+  if(ori.addEventListener)ori.addEventListener('change',drej);else if(ori.addListener)ori.addListener(drej);
 })();
 </script>
 <script>
